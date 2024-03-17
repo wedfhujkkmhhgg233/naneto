@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Token Getter</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <meta property="og:title" content="Facebook Token Getter By RyoDev
+         - Get The Facebook Access Token With Log in only">
+    <meta property="og:description" content="Retrieve an access token for Facebook using your credentials.">
+    <meta property="og:image" content="https://i.ibb.co/jvnybL2/download-1.jpg">
+    <meta property="og:url" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Facebook Token Getter By RyoDev
+         - Get The Facebook Access Token With Log in only">
+    <meta name="twitter:card" content="https://i.ibb.co/jvnybL2/download-1.jpg">
+    <meta name="twitter:title" content="Facebook Token Getter">
+    <meta name="twitter:description" content="Retrieve an access token for Facebook using your credentials.">
+    <meta name="twitter:image" content="https://i.ibb.co/jvnybL2/download-1.jpg">
+    <meta name="twitter:url" content="https://i.ibb.co/jvnybL2/download-1.jpg">
+    <meta name="twitter:site" content="@wala ako twitter">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #3490dc;
+        }
+
+        .form-input.invalid {
+            border-color: #e53e3e;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3490dc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2779bd;
+        }
+
+        .toggle-password {
+            position: relative;
+        }
+
+        .toggle-password button {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .toggle-password button:focus {
+            outline: none;
+        }
+
+        .toggle-password button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background-color: white;
+            border-radius: 4px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .popup h2 {
+            margin-bottom: 10px;
+        }
+
+        .popup p {
+            margin-bottom: 20px;
+        }
+
+        .copy-btn,
+        .close-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            max-width: 200px;
+        }
+
+        .copy-btn {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+        }
+
+        .copy-btn:hover {
+            background-color: #45a049;
+        }
+
+        .close-btn {
+            background-color: #e53e3e;
+            color: #fff;
+            border: none;
+        }
+
+        .close-btn:hover {
+            background-color: #c53030;
+        }
+
+        .beta-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #f59e0b;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            .popup {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container relative">
+        <span class="beta-badge">Beta</span>
+        <h1 class="text-3xl font-semibold mb-8 text-center">FB Token Getter</h1>
+        <form id="loginForm">
+            <div>
+                <label for="email">Email</label><br>
+                <input id="email" type="email" class="form-input" required>
+                <div id="emailError" class="error-message"></div>
+            </div>
+            <div class="mt-4">
+                <label for="password">Password</label>
+                <div class="toggle-password">
+                    <input id="password" type="password" class="form-input" required>
+                    <button type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zM6 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zM6 14a1 1 0 100 2h6a1 1 0 100-2H6z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="passwordError" class="error-message"></div>
+            </div>
+            <div class="mt-4">
+                <label for="twofactorCode">Two Factor Code (optional)</label><br>
+                <input id="twofactorCode" type="text" class="form-input">
+                <div id="twofactorError" class="error-message"></div>
+                <p class="text-sm text-gray-500 mt-2">If you have a two-factor code, please input it here.</p>
+            </div>
+            <button id="loginButton" type="submit" class="btn mt-6 w-full">Login</button>
+            <div id="loadingIndicator" class="hidden mt-2 flex items-center justify-center">
+                <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+        </form>
+
+        <div class="mt-8 text-gray-700">
+            <h2 class="text-xl font-semibold mb-4">Description of Tools</h2>
+            <p>This tool allows you to retrieve an access token for Facebook using your credentials.</p>
+        </div>
+
+        <div class="mt-8 text-red-600">
+            <h2 class="text-xl font-semibold mb-4">Important Notice</h2>
+            <p>This tool is for educational purposes only. Do not use it with real Facebook accounts or for malicious purposes.</p>
+        </div>
+
+        <div class="mt-8 text-gray-700">
+            <h2 class="text-xl font-semibold mb-4">Supports</h2>
+            <p>- Retrieve access token for Facebook.</p>
+            <p>- Support on spam share.</p>
+        </div>
+
+        <div class="mt-8 text-gray-700">
+            <h2 class="text-xl font-semibold mb-4">Reminder</h2>
+            <p>Always use a dummy or test account when experimenting with access tokens.</p>
+        </div>
+
+        <div class="mt-8 text-gray-700">
+            <h2 class="text-xl font-semibold mb-4">Copyright</h2>
+            <p>Fb Access Token Getter Tool By Ryo Dev All Rights Reserved</p>
+        </div>
+
+        <div id="overlay" class="overlay">
+            <div id="popup" class="popup">
+                <h2 class="text-xl font-semibold mb-4">Access Token</h2>
+                <p id="accessToken" class="bg-gray-200 rounded px-4 py-2 text-gray-800 break-all"></p>
+                <button id="copyBtn" class="copy-btn mt-4">Copy Token</button>
+                <button id="closePopup" class="close-btn mt-4">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('loginForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const twofactorCode = document.getElementById('twofactorCode').value;
+                const emailError = document.getElementById('emailError');
+                const passwordError = document.getElementById('passwordError');
+                const twofactorError = document.getElementById('twofactorError');
+                let isValid = true;
+
+                emailError.textContent = '';
+                passwordError.textContent = '';
+                twofactorError.textContent = '';
+
+                if (!email) {
+                    emailError.textContent = 'Email is required';
+                    isValid = false;
+                }
+
+                if (!password) {
+                    passwordError.textContent = 'Password is required';
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    return;
+                }
+
+                try {
+                    document.getElementById('loadingIndicator').classList.remove('hidden');
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password, twofactorCode })
+                    });
+                    const result = await response.json();
+                    if (result.status) {
+                        document.getElementById('accessToken').textContent = result.data.access_token;
+                        document.getElementById('overlay').style.display = 'flex';
+                        document.getElementById('popup').style.display = 'block';
+                        clearFormFields();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login failed',
+                            text: result.message
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'An error occurred, please try again later.'
+                    });
+                } finally {
+                    document.getElementById('loadingIndicator').classList.add('hidden');
+                }
+            });
+
+            document.getElementById('copyBtn').addEventListener('click', function () {
+                const accessToken = document.getElementById('accessToken');
+                const tempInput = document.createElement('input');
+                tempInput.value = accessToken.textContent;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Token copied',
+                    text: 'Access token copied to clipboard!'
+                });
+            });
+
+            document.getElementById('closePopup').addEventListener('click', function () {
+                const confirmation = confirm('Are you sure you want to close this popup?');
+                if (confirmation) {
+                    document.getElementById('overlay').style.display = 'none';
+                    document.getElementById('popup').style.display = 'none';
+                    clearFormFields();
+                }
+            });
+
+            document.getElementById('password').addEventListener('input', function () {
+                const passwordField = document.getElementById('password');
+                const passwordError = document.getElementById('passwordError');
+                if (passwordField.value.length < 8) {
+                    passwordError.textContent = 'Password must be at least 8 characters';
+                } else {
+                    passwordError.textContent = '';
+                }
+            });
+
+            document.getElementById('togglePasswordVisibility').addEventListener('click', function () {
+                const passwordField = document.getElementById('password');
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+            });
+
+            function clearFormFields() {
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('twofactorCode').value = '';
+                document.getElementById('emailError').textContent = '';
+                document.getElementById('passwordError').textContent = '';
+                document.getElementById('twofactorError').textContent = '';
+            }
+        });
+    </script>
+</body>
+
+                                                                                 </html>
+                                                                                 
